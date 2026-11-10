@@ -1,4 +1,4 @@
-# A loc APP — Persistência de dados e permissões
+# Localização APP — Persistência de dados e permissões
 
 Aplicativo mobile feito com **React Native** e **Expo** que captura a localização atual do dispositivo, salva cada captura localmente e permite alternar entre tema claro e escuro, mantendo tudo salvo mesmo depois de fechar o app.
 
