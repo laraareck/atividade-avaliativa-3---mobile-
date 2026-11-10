@@ -1,10 +1,10 @@
-# 📍 Localização APP — Armazenamento local e controle de permissões
+# Localização APP - Armazenamento local e controle de permissões
 
 Aplicação mobile desenvolvida com **React Native** e **Expo**, que permite obter a localização atual do dispositivo, armazenar os registros localmente e personalizar a interface alternando entre os temas claro e escuro.
 
 O projeto faz parte da **Atividade 3**, cujo objetivo é colocar em prática conceitos de armazenamento persistente e gerenciamento de permissões em aplicações móveis.
 
-## ✨ Recursos
+## Recursos
 
 - **Obter localização atual:** usa a biblioteca `expo-location` para identificar as coordenadas geográficas do dispositivo com alta precisão.
 - **Controle de acesso:** solicita ao usuário permissão para acessar a localização durante o uso do app. Se a autorização for recusada, uma mensagem de alerta é exibida.
@@ -12,7 +12,7 @@ O projeto faz parte da **Atividade 3**, cujo objetivo é colocar em prática con
 - **Consulta de registros:** exibe as localizações salvas em ordem decrescente de data, com coordenadas de seis casas decimais e data no padrão brasileiro.
 - **Alternância de aparência:** um `Switch` alterna entre os modos claro e escuro e salva a escolha para os próximos acessos.
 
-## 🛠️ Tecnologias
+## Tecnologias
 
 | Tecnologia     | Versão   | Finalidade                                              |
 | -------------- | -------- | ------------------------------------------------------- |
@@ -22,7 +22,7 @@ O projeto faz parte da **Atividade 3**, cujo objetivo é colocar em prática con
 | expo-location  | ~58.0    | Acesso à localização e gerenciamento de permissões      |
 | AsyncStorage   | 2.2.0    | Armazenamento persistente das informações e configurações |
 
-## 📁 Estrutura do projeto
+## Estrutura do projeto
 
 ```text
 .
@@ -40,7 +40,7 @@ O projeto faz parte da **Atividade 3**, cujo objetivo é colocar em prática con
         └── theme.js
 ```
 
-## ⚙️ Como funciona
+## Como funciona
 
 ### Obtenção e registro da localização
 
@@ -75,7 +75,7 @@ Exemplo de registro de localização:
 
 Sempre que o app é aberto, o `App.js` executa `initDatabase()` e `loadTheme()` dentro de um `useEffect`. Assim, o histórico de localizações e a preferência de tema são recuperados automaticamente, sem perder nada ao fechar o aplicativo.
 
-## 🚀 Como executar
+## Como executar
 
 1. Clone o repositório:
 
@@ -109,13 +109,12 @@ npm run ios       # Executa no simulador iOS (macOS)
 npm run web       # Versão para navegador
 ```
 
-## ⚠️ Observações importantes
+## Observações importantes
 
 - É necessário permitir o acesso à localização para usar o recurso de captura.
 - Os serviços de localização do dispositivo precisam estar ativados.
 - Em emulador, pode ser preciso configurar manualmente uma localização simulada nas opções do ambiente virtual.
 
-## 📄 Licença
+## Licença
 
 Este projeto está sob a licença **MIT**. Para os termos de uso e distribuição, consulte o arquivo `LICENSE`.
-
