@@ -1,101 +1,107 @@
-# Localização APP — Persistência de dados e permissões
+Localização APP — Armazenamento local e controle de permissões
+Aplicação mobile desenvolvida com React Native e Expo, que permite obter a localização atual do dispositivo, armazenar os registros localmente e personalizar a interface por meio da alternância entre os temas claro e escuro.
 
-Aplicativo mobile feito com **React Native** e **Expo** que captura a localização atual do dispositivo, salva cada captura localmente e permite alternar entre tema claro e escuro, mantendo tudo salvo mesmo depois de fechar o app.
+O projeto faz parte da Atividade 3, cujo objetivo é colocar em prática conceitos de armazenamento persistente e gerenciamento de permissões em aplicações móveis.
 
-Projeto desenvolvido como **Atividade 3** para praticar persistência de dados e gerenciamento de permissões em soluções mobile.
+Recursos disponíveis
+Obter localização atual: utiliza a biblioteca expo-location para identificar as coordenadas geográficas do dispositivo com alta precisão.
+Controle de acesso: solicita ao usuário permissão para acessar a localização durante o uso do aplicativo. Caso a autorização seja recusada, uma mensagem de alerta é apresentada.
+Armazenamento do histórico: registra cada localização obtida, incluindo identificador, latitude, longitude e data e horário da captura.
+Consulta de registros: apresenta as localizações armazenadas em ordem decrescente de data, mostrando as coordenadas com seis casas decimais e a data formatada conforme o padrão brasileiro.
+Alternância de aparência: disponibiliza um controle Switch para modificar entre os modos claro e escuro, salvando a escolha para os próximos acessos.
+Ferramentas e bibliotecas utilizadas
 
-## Funcionalidades
+Tecnologia	Versão	Finalidade
+Expo	~58.0	Ambiente de desenvolvimento e execução do aplicativo
+React Native	0.88.1	Construção dos componentes e da interface mobile
+React	19.3.0	Gerenciamento de componentes e estados
+expo-location	~58.0	Acesso à localização e gerenciamento de permissões
+AsyncStorage	2.2.0	Armazenamento persistente das informações e configurações
+Organização dos arquivos
+A aplicação está dividida em arquivos responsáveis pela interface, configuração, acesso à localização e armazenamento dos dados:
 
-- **Captura de localização:** obtém latitude e longitude atuais com `expo-location`, usando alta precisão.
-- **Solicitação de permissão:** pede autorização de localização em primeiro plano no momento da captura e exibe um alerta caso o usuário negue.
-- **Histórico persistente:** cada captura é salva com `id`, coordenadas e data/hora, e o histórico é recarregado automaticamente quando o app abre.
-- **Listagem:** exibe as localizações salvas, da mais recente para a mais antiga, com latitude e longitude (6 casas decimais) e data no formato `pt-BR`.
-- **Dark mode:** um `Switch` alterna o tema e a preferência é lembrada entre sessões.
 
-## Tecnologias
-
-| Tecnologia | Versão | Uso |
-| --- | --- | --- |
-| [Expo](https://expo.dev/) | ~58.0 | Plataforma e ferramentas de desenvolvimento |
-| [React Native](https://reactnative.dev/) | 0.88.1 | Interface mobile |
-| [React](https://react.dev/) | 19.3.0 | Componentes e estado |
-| [expo-location](https://docs.expo.dev/versions/latest/sdk/location/) | ~58.0 | Permissão e leitura da localização |
-| [AsyncStorage](https://react-native-async-storage.github.io/async-storage/) | 2.2.0 | Persistência local (localizações e tema) |
-
-## Estrutura do projeto
-
-```
+text
 .
-├── App.js                  
-├── index.js                
-├── app.json                
-├── metro.config.js         
+├── App.js
+├── index.js
+├── app.json
+├── metro.config.js
 ├── package.json
 └── src/
     ├── db/
-    │   └── database.js     
+    │   └── database.js
     ├── hooks/
-    │   └── useLocation.js  
+    │   └── useLocation.js
     └── storage/
-        └── theme.js        
-```
+        └── theme.js
+Funcionamento da aplicação
+Obtenção e registro da localização
+O processo de captura segue estas etapas:
 
-## Como funciona
+O usuário seleciona a opção Capturar localização na tela principal.
+O método getCurrentLocation() verifica e solicita a autorização necessária para acessar a localização em primeiro plano.
+Caso a permissão seja negada, o aplicativo apresenta um alerta informando que não foi possível obter a localização.
+Após a autorização, o dispositivo fornece as coordenadas atuais utilizando a configuração Accuracy.High.
+A função insertLocation() gera um novo registro com as informações obtidas e realiza sua gravação no armazenamento local.
+A localização recém-capturada passa a ser exibida no início do histórico.
+Armazenamento das informações
+Para manter os dados disponíveis mesmo após o encerramento do aplicativo, foi utilizado o AsyncStorage, que permite salvar informações localmente no dispositivo.
 
-### Fluxo de captura
+São utilizadas duas chaves para organizar os dados:
 
-1. O usuário toca em **Capturar localização**.
-2. `getCurrentLocation()` solicita a permissão de localização em primeiro plano. Se não for concedida, lança o erro `Permissão de localização negada.`, exibido em um `Alert`.
-3. Com a permissão concedida, lê a posição atual com `Accuracy.High` e devolve `{ latitude, longitude }`.
-4. `insertLocation()` cria o registro e o grava no armazenamento local.
-5. O novo registro é inserido no topo da lista na interface.
 
-### Persistência
+Identificador	Informação armazenada
+@myLocation:locations	Registros das localizações capturadas
+@myLocation:theme	Configuração visual selecionada pelo usuário (true para escuro e false para claro)
+Os registros de localização seguem uma estrutura semelhante ao exemplo abaixo:
 
-Os dados são salvos no **AsyncStorage**, em formato JSON, sob duas chaves:
 
-| Chave | Conteúdo |
-| --- | --- |
-| `@myLocation:locations` | Lista de localizações capturadas |
-| `@myLocation:theme` | Preferência de tema (`true` para escuro, `false` para claro) |
-
-Cada localização salva tem este formato:
-
-```json
+json
 {
   "id": 1731250000000,
   "latitude": -28.677700,
   "longitude": -49.369700,
   "created_at": "2026-11-10T15:30:00.000Z"
 }
-```
+Recuperação dos dados ao iniciar
+Sempre que o aplicativo é aberto, o arquivo App.js executa as funções initDatabase() e loadTheme() por meio de um useEffect.
 
-Ao iniciar, o `App.js` chama `initDatabase()` e `loadTheme()` dentro de um `useEffect`, restaurando o histórico e o tema salvos.
+Esse processo permite recuperar automaticamente o histórico de localizações e a preferência de tema anteriormente selecionada, evitando que essas informações sejam perdidas ao fechar o aplicativo.
 
-## Instalação e execução
+Configuração do ambiente
+Para executar o projeto localmente, siga as instruções abaixo:
 
-```bash
-# 1. Clone o repositório
+1. Baixe o repositório:
+
+
+bash
 git clone <url-do-repositorio>
+2. Acesse a pasta do projeto:
+
+
+bash
 cd Atividade3_Persistencia_de_dados_e_Permissoes
+3. Instale os pacotes necessários:
 
-# 2. Instale as dependências
+
+bash
 npm install
+4. Inicialize o Expo:
 
-# 3. Inicie o servidor de desenvolvimento
+
+bash
 npx expo start
-```
+Após iniciar o servidor, utilize o QR Code disponibilizado para abrir a aplicação pelo Expo Go ou escolha uma das opções de execução:
 
-Depois, escaneie o QR Code com o Expo Go ou use os atalhos do terminal:
 
-```bash
-npm run android   # abre no emulador/dispositivo Android
-npm run ios       # abre no simulador iOS (somente macOS)
-npm run web       # abre no navegador
-```
-
-> **Importante:** a captura depende da permissão concedida pelo usuário e dos serviços de localização ativos no dispositivo. Em emuladores, defina uma localização simulada nas configurações do próprio emulador.
-
-## Licença
-
-Distribuído sob a licença MIT. Veja o arquivo [LICENSE](./LICENSE).
+bash
+npm run android   # Executa no Android
+npm run ios       # Executa no simulador iOS (macOS)
+npm run web       # Disponibiliza a versão para navegador
+Observações importantes
+É necessário permitir o acesso à localização para utilizar o recurso de captura.
+Os serviços de localização do dispositivo precisam estar ativados.
+Ao utilizar um emulador, pode ser necessário configurar manualmente uma localização simulada nas opções do ambiente virtual.
+Licença
+Este projeto está disponibilizado sob a licença MIT. Para consultar os termos de utilização e distribuição, acesse o arquivo LICENSE.
